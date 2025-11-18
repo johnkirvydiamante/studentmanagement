@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+header {
+  background-color: ##f4f4f4 !important;
+  color: #fff;
+}
+
+
+.w3-button.w3-blue {
+  background-color: #0d6efd !important;
+  color: #fff !important;
+}
+
+/* Cancel button */
+.w3-button.w3-red {
+  background-color: #dc3545 !important;
+  color: #fff !important;
+}
+
+
+.w3-input.w3-border {
+  border: 1px solid #ced4da !important;
+  color: #212529 !important;
+  background-color: #ffffff !important;
+}
+
+/* Table header */
+.w3-table-all tr.w3-light-grey {
+  background-color: #343a40 !important;
+  color: #fff !important;
+}
+
+/* Table rows alternating colors */
+.w3-table-all tr:nth-child(even) {
+  background-color: #f8f9fa !important;
+}
+
+.w3-table-all tr:nth-child(odd) {
+  background-color: #ffffff !important;
+}
+
+/* Table text color */
+.w3-table-all td, .w3-table-all th {
+  color: #212529 !important;
+}
+
+/* Action buttons */
+.w3-button.w3-blue {
+  background-color: #0d6efd !important;
+  color: white !important;
+}
+
+.w3-button.w3-red {
+  background-color: #dc3545 !important;
+  color: white !important;
+}
+
+/* Image borders */
+.w3-circle {
+  border: 2px solid #ced4da !important;
+}
+
+/* Center legend text and style */
+fieldset legend {
+  font-weight: bold;
+  color: #212529 !important;
+}
+
+
+.w3-card-4.w3-container.w3-padding {
+  background-color: #fff !important;
+  border: 1px solid #ced4da !important;
+}
+
+
+.w3-card.w3-margin-top.w3-padding.w3-center {
+  background-color: #fff !important;
+  border: 1px solid #ced4da !important;
+  color: #212529;
+}
+</style>
+
+<div class="w3-row-padding">
+
+    <div class="w3-third">
+        <div class="w3-card-4 w3-container w3-padding">
+            <fieldset>
+                <legend><b>STUDENT INFORMATION</b></legend>
+                <form action="{{ url_for('save_student') }}" method="POST" enctype="multipart/form-data">
+                    <center>
+                        <label for="photo-input" style="cursor:pointer;">
+                            <img id="photo-preview"
+                                 src="{% if student_data and student_data['photo'] %}{{ url_for('static', filename='uploads/' ~ student_data['photo']) }}{% else %}{{ url_for('static', filename='images/account.png') }}{% endif %}"
+                                 onerror="this.src='{{ url_for('static', filename='images/account.png') }}'"
+                                 class="w3-circle"
+                                 style="width:120px;height:120px;object-fit:cover;border:3px solid #ccc;"
+                                 data-original-src="{% if student_data and student_data['photo'] %}{{ url_for('static', filename='uploads/' ~ student_data['photo']) }}{% else %}{{ url_for('static', filename='images/account.png') }}{% endif %}">
+                            <div class="w3-small">&#128247;</div>
+                        </label>
+                        <input type="file" name="photo" id="photo-input" accept="image/*" style="display:none;">
+                    </center>
+
+                    <p><label><b>IDNO</b></label>
+                        <input type="text" name="idno" id="idno" class="w3-input w3-border"
+                               value="{{ student_data['idno'] if student_data else '' }}" required>
+                    </p>
+                    <p><label><b>LASTNAME</b></label>
+                        <input type="text" name="lastname" id="lastname" class="w3-input w3-border"
+                               value="{{ student_data['lastname'] if student_data else '' }}" required>
+                    </p>
+                    <p><label><b>FIRSTNAME</b></label>
+                        <input type="text" name="firstname" id="firstname" class="w3-input w3-border"
+                               value="{{ student_data['firstname'] if student_data else '' }}" required>
+                    </p>
+                    <p><label><b>COURSE</b></label>
+                        <select name="course" id="course" class="w3-input w3-border" required>
+                            <option value="bsit" {% if student_data and student_data['course']=='bsit' %}selected{% endif %}>INFORMATION TECHNOLOGY</option>
+                            <option value="bscs" {% if student_data and student_data['course']=='bscs' %}selected{% endif %}>COMPUTER SCIENCE</option>
+                            <option value="bscpe" {% if student_data and student_data['course']=='bscpe' %}selected{% endif %}>COMPUTER ENGINEERING</option>
+                            <option value="bshm" {% if student_data and student_data['course']=='bshm' %}selected{% endif %}>HOSPITALITY MANAGEMENT</option>
+                            <option value="bscj" {% if student_data and student_data['course']=='bscj' %}selected{% endif %}>CRIMINAL JUSTICE</option>
+                        </select>
+                    </p>
+                    <p><label><b>LEVEL</b></label>
+                        <select name="level" id="level" class="w3-input w3-border" required>
+                            <option value="1" {% if student_data and (student_data['level']|string) == '1' %}selected{% endif %}>FIRST YEAR</option>
+                            <option value="2" {% if student_data and (student_data['level']|string) == '2' %}selected{% endif %}>SECOND YEAR</option>
+                            <option value="3" {% if student_data and (student_data['level']|string) == '3' %}selected{% endif %}>THIRD YEAR</option>
+                            <option value="4" {% if student_data and (student_data['level']|string) == '4' %}selected{% endif %}>FOURTH YEAR</option>
+                        </select>
+                    </p>
+                    <p class="w3-right">
+                        <input type="submit" value="UPDATE" class="w3-button w3-blue">
+                        <input type="reset" value="CANCEL" class="w3-button w3-red"
+                               onclick="window.location='{{ url_for('index') }}'">
+                    </p>
+                </form>
+            </fieldset>
+
+            {% if student_data %}
+            <div class="w3-card w3-margin-top w3-padding w3-center">
+                <img id="side-photo" src="{{ url_for('static', filename='uploads/' ~ student_data['photo']) }}" onerror="this.src='{{ url_for('static', filename='images/account.png') }}'" class="w3-circle" style="width:100px;height:100px;object-fit:cover;">
+                <h4>{{ student_data['firstname']|upper }} {{ student_data['lastname']|upper }}</h4>
+                <p><b>ID:</b> {{ student_data['idno'] }}</p>
+                <p><b>COURSE:</b> {{ student_data['course']|upper }}</p>
+                <p><b>LEVEL:</b> {{ student_data['level'] }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+   
+    <div class="w3-twothird w3-container">
+        <table class="w3-table-all w3-card-4">
+            <tr class="w3-light-grey">
+                <th>PHOTO</th>
+                <th>IDNO</th>
+                <th>LASTNAME</th>
+                <th>FIRSTNAME</th>
+                <th>COURSE</th>
+                <th>LEVEL</th>
+                <th>ACTIONS</th>
+            </tr>
+            {% for student in studentlist %}
+            <tr>
+                <td>
+                    {% if student.photo %}
+                        <img src="{{ url_for('static', filename='uploads/' ~ student.photo) }}" onerror="this.src='{{ url_for('static', filename='images/account.png') }}'" class="w3-circle" style="width:50px;height:50px;object-fit:cover;">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='images/account.png') }}" class="w3-circle" style="width:50px;height:50px;object-fit:cover;">
+                    {% endif %}
+                </td>
+                <td>{{ student.idno }}</td>
+                <td>{{ student.lastname.upper() }}</td>
+                <td>{{ student.firstname.upper() }}</td>
+                <td>{{ student.course.upper() }}</td>
+                <td>{{ student.level }}</td>
+                <td>
+                    <a href="/?edit={{ student.idno }}" class="w3-button w3-small w3-blue">&#9998;</a>
+                    <a href="{{ url_for('delete_student', idno=student.idno) }}" class="w3-button w3-small w3-red" onclick="return confirm('Delete this student?')">&#128465;</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+
+<script>
+const fileInput = document.getElementById("photo-input");
+const preview = document.getElementById("photo-preview");
+const sidePhoto = document.getElementById("side-photo");
+const original = preview.getAttribute("data-original-src") || preview.src;
+
+if (fileInput) {
+  fileInput.addEventListener("change", function(e) {
+    const f = e.target.files[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      preview.src = ev.target.result;
+      if (sidePhoto) sidePhoto.src = ev.target.result;
+    };
+    reader.readAsDataURL(f);
+  });
+}
+</script>
+{% endblock %}
